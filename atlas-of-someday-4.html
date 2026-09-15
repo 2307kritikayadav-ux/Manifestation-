@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas of Someday</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Courier+Prime:wght@400;700&display=swap');
+
+:root{
+  --paper: #f1e8d6;
+  --paper-dark: #e5d9bf;
+  --ink: #24304a;
+  --ink-soft: #4a5878;
+  --brass: #a97a34;
+  --stamp: #a1453c;
+  --line: #cabf9e;
+  --card: #f8f2e3;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin: 0;
+  background: var(--paper);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.015) 0px, transparent 1px, transparent 2px),
+    radial-gradient(ellipse at top left, rgba(169,122,52,0.06), transparent 60%);
+  color: var(--ink);
+  font-family: 'Fraunces', serif;
+  min-height: 100vh;
+  padding: 28px 16px 60px;
+}
+
+.wrap{ max-width: 900px; margin: 0 auto; }
+
+header{
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 16px;
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+h1{
+  font-size: 34px;
+  font-weight: 600;
+  font-style: italic;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.tagline{
+  font-family: 'Courier Prime', monospace;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
+.count{
+  font-family: 'Courier Prime', monospace;
+  font-size: 12px;
+  color: var(--brass);
+  text-align: right;
+  line-height: 1.6;
+}
+
+.tabs{
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tab{
+  font-family: 'Courier Prime', monospace;
+  font-size: 12px;
+  padding: 7px 14px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: 2px;
+  letter-spacing: 0.4px;
+}
+
+.tab.active{
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 18px;
+}
+
+.place-card{
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 16px 16px 14px;
+  position: relative;
+  box-shadow: 2px 3px 0 rgba(36,48,74,0.08);
+  transition: transform 0.15s ease;
+}
+
+.place-card:nth-child(3n+1){ transform: rotate(-0.4deg); }
+.place-card:nth-child(3n+2){ transform: rotate(0.3deg); }
+.place-card:nth-child(3n){ transform: rotate(-0.2deg); }
+.place-card:hover{ transform: rotate(0deg) translateY(-2px); }
+
+.photo-block{
+  width: calc(100% + 32px);
+  margin: -16px -16px 12px;
+  overflow: hidden;
+  background: var(--paper-dark);
+  position: relative;
+  cursor: pointer;
+}
+.photo-block img{
+  width: 100%;
+  height: auto;
+  max-height: 320px;
+  min-height: 90px;
+  object-fit: contain;
+  display: block;
+}
+.photo-placeholder{
+  height: 130px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--ink-soft);
+  font-family: 'Courier Prime', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.5px;
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(36,48,74,0.035) 8px, rgba(36,48,74,0.035) 9px);
+}
+.photo-placeholder .glyph{ font-size: 20px; }
+.photo-block:hover .photo-placeholder{ color: var(--ink); }
+.photo-block input[type=file]{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+.photo-caption{
+  font-family: 'Courier Prime', monospace;
+  font-size: 10px;
+  color: var(--ink-soft);
+  text-align: right;
+  margin: -6px 0 10px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.photo-caption:hover{ color: var(--ink); }
+
+.card-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.place-name{
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 2px;
+}
+
+.place-country{
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.category-mark{
+  font-family: 'Courier Prime', monospace;
+  font-size: 10px;
+  border: 1px solid var(--ink-soft);
+  color: var(--ink-soft);
+  padding: 2px 6px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.place-note{
+  font-family: 'Courier Prime', monospace;
+  font-size: 12.5px;
+  color: var(--ink);
+  margin: 10px 0;
+  line-height: 1.5;
+  min-height: 18px;
+}
+
+.card-bottom{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+  margin-top: 8px;
+}
+
+.stars{
+  letter-spacing: 1px;
+  color: var(--brass);
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.stamp{
+  font-family: 'Courier Prime', monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border: 2px solid var(--stamp);
+  color: var(--stamp);
+  border-radius: 4px;
+  transform: rotate(-4deg);
+  cursor: pointer;
+  background: transparent;
+}
+
+.stamp.planned{ border-color: var(--brass); color: var(--brass); }
+.stamp.visited{ border-color: var(--ink-soft); color: var(--ink-soft); }
+
+.remove-btn{
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-family: 'Courier Prime', monospace;
+  font-size: 14px;
+  color: var(--line);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.remove-btn:hover{ color: var(--stamp); }
+
+.add-card{
+  border: 1.5px dashed var(--ink-soft);
+  background: transparent;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  cursor: pointer;
+  color: var(--ink-soft);
+  font-family: 'Courier Prime', monospace;
+  font-size: 13px;
+  gap: 6px;
+}
+.add-card:hover{ color: var(--ink); border-color: var(--ink); }
+.add-card .plus{ font-size: 28px; font-family: 'Fraunces', serif; line-height: 1; }
+
+.empty-msg{
+  font-family: 'Courier Prime', monospace;
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-align: center;
+  padding: 40px 10px;
+  grid-column: 1 / -1;
+}
+
+/* Modal form */
+.overlay{
+  position: fixed; inset: 0;
+  background: rgba(36,48,74,0.35);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+}
+.overlay.open{ display: flex; }
+
+.form-card{
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  padding: 24px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 4px 5px 0 rgba(36,48,74,0.15);
+}
+
+.form-card h2{
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.field{ margin-bottom: 12px; }
+.field label{
+  display: block;
+  font-family: 'Courier Prime', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+.field input, .field select, .field textarea{
+  width: 100%;
+  font-family: 'Courier Prime', monospace;
+  font-size: 13px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 2px;
+}
+.field textarea{ resize: vertical; min-height: 50px; }
+
+.priority-picker{ font-size: 20px; letter-spacing: 3px; cursor: pointer; color: var(--line); }
+.priority-picker .filled{ color: var(--brass); }
+
+.form-photo{
+  width: 100%;
+  height: 100px;
+  border: 1.5px dashed var(--line);
+  border-radius: 2px;
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  color: var(--ink-soft);
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+}
+.form-photo img{ width: 100%; height: 100%; object-fit: cover; }
+.form-photo input[type=file]{ display: none; }
+
+.upload-wrap{
+  position: relative;
+  width: 100%;
+  height: 42px;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier Prime', monospace;
+  font-size: 12px;
+  overflow: hidden;
+}
+.upload-wrap input[type=file]{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+.or-divider{
+  text-align: center;
+  font-family: 'Courier Prime', monospace;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  margin: 8px 0;
+}
+
+.form-actions{
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.btn{
+  font-family: 'Courier Prime', monospace;
+  font-size: 12px;
+  padding: 9px 16px;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.4px;
+}
+.btn-primary{ background: var(--ink); color: var(--paper); border: 1px solid var(--ink); flex: 1; }
+.btn-secondary{ background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+
+.status-line{
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  color: var(--ink-soft);
+  text-align: center;
+  margin-top: 30px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Atlas of Someday</h1>
+      <div class="tagline">a running ledger of places not yet seen — shared with whoever has this link</div>
+    </div>
+    <div class="count" id="countBox">0 entries</div>
+  </header>
+
+  <button class="tab" id="shareLinkBtn" style="display:none; margin-bottom:14px; width:100%;">🔗 copy link to share with a friend</button>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-filter="all">ALL</button>
+    <button class="tab" data-filter="dream">DREAM</button>
+    <button class="tab" data-filter="planned">PLANNED</button>
+    <button class="tab" data-filter="visited">VISITED</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="status-line" id="statusLine">loading your atlas…</div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="form-card">
+    <h2>New entry</h2>
+    <div class="field">
+      <label>Place</label>
+      <input type="text" id="fName" placeholder="e.g. Kyoto">
+    </div>
+    <div class="field">
+      <label>Country / region</label>
+      <input type="text" id="fCountry" placeholder="e.g. Japan">
+    </div>
+    <div class="field">
+      <label>Photo (optional)</label>
+      <div class="upload-wrap">
+        <span>📷 choose a photo from your device</span>
+        <input type="file" id="fPhotoFile" accept="image/*">
+      </div>
+      <div class="or-divider">— or —</div>
+      <input type="url" id="fPhotoUrl" placeholder="paste a photo link (URL)">
+      <div class="form-photo" id="formPhotoBox" style="display:none; margin-top:6px;">
+        <img id="formPhotoPreview" alt="preview">
+      </div>
+    </div>
+    <div class="field">
+      <label>Category</label>
+      <select id="fCategory">
+        <option value="city">city</option>
+        <option value="nature">nature</option>
+        <option value="coast">coast</option>
+        <option value="mountain">mountain</option>
+        <option value="culture">culture</option>
+        <option value="food">food</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Why (a line or two)</label>
+      <textarea id="fNote" placeholder="What's pulling you there?"></textarea>
+    </div>
+    <div class="field">
+      <label>How badly do you want this</label>
+      <div class="priority-picker" id="priorityPicker">★★★★★</div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="saveBtn">Add to atlas</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'atlas-of-someday:places';
+let places = [];
+let currentFilter = 'all';
+let selectedPriority = 3;
+let pendingPhotoData = null;
+
+const hasClaudeStorage = (typeof window.storage !== 'undefined') && window.storage !== null;
+
+const urlParams = new URLSearchParams(location.search);
+let blobId = urlParams.get('list');
+let blobReady = null;
+
+function ensureBlob(){
+  if(hasClaudeStorage) return Promise.resolve(null);
+  if(blobId) return Promise.resolve(blobId);
+  if(blobReady) return blobReady;
+  blobReady = fetch('https://jsonblob.com/api/jsonBlob', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','Accept':'application/json'},
+    body: '[]'
+  }).then(res => {
+    const loc = res.headers.get('Location') || '';
+    blobId = loc.split('/').pop();
+    if(blobId){
+      const newUrl = location.origin + location.pathname + '?list=' + blobId;
+      history.replaceState({}, '', newUrl);
+      updateShareLink();
+    }
+    return blobId;
+  }).catch(() => null);
+  return blobReady;
+}
+
+function updateShareLink(){
+  const el = document.getElementById('shareLinkBtn');
+  if(el) el.style.display = (!hasClaudeStorage && blobId) ? '' : 'none';
+}
+
+async function storageGet(key){
+  if(hasClaudeStorage){
+    try{
+      const res = await window.storage.get(key, true);
+      return res ? res.value : null;
+    } catch(e){ return null; }
+  }
+  try{
+    const id = await ensureBlob();
+    if(!id) throw new Error('no blob');
+    const res = await fetch(`https://jsonblob.com/api/jsonBlob/${id}`, { headers: {'Accept':'application/json'} });
+    if(!res.ok) throw new Error('fetch failed');
+    const data = await res.json();
+    return JSON.stringify(data);
+  } catch(e){
+    try{ return localStorage.getItem(key); } catch(e2){ return null; }
+  }
+}
+
+async function storageSet(key, value){
+  if(hasClaudeStorage){
+    try{
+      await window.storage.set(key, value, true);
+      return true;
+    } catch(e){ return false; }
+  }
+  try{
+    const id = await ensureBlob();
+    if(!id) throw new Error('no blob');
+    const res = await fetch(`https://jsonblob.com/api/jsonBlob/${id}`, {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json','Accept':'application/json'},
+      body: value
+    });
+    if(!res.ok) throw new Error('save failed');
+    try{ localStorage.setItem(key, value); } catch(e2){}
+    return true;
+  } catch(e){
+    try{ localStorage.setItem(key, value); return true; } catch(e2){ return false; }
+  }
+}
+
+function resizeImage(file, maxWidth, quality){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('read failed'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('decode failed'));
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+const grid = document.getElementById('grid');
+const countBox = document.getElementById('countBox');
+const statusLine = document.getElementById('statusLine');
+const overlay = document.getElementById('overlay');
+const priorityPicker = document.getElementById('priorityPicker');
+
+function uid(){ return 'p_' + Date.now() + '_' + Math.floor(Math.random()*10000); }
+
+function on(id, event, handler){
+  const el = document.getElementById(id);
+  if(el) el.addEventListener(event, handler);
+  else console.error('Atlas: missing element #' + id);
+}
+
+window.handleImgError = function(imgEl){
+  const placeholder = document.createElement('div');
+  placeholder.className = 'photo-placeholder';
+  placeholder.innerHTML = '<span class="glyph">⚠</span><span>link didn\'t load — tap to try another</span>';
+  imgEl.replaceWith(placeholder);
+};
+
+async function loadPlaces(){
+  const value = await storageGet(STORAGE_KEY);
+  try{
+    places = value ? JSON.parse(value) : [];
+  } catch(e){
+    places = [];
+  }
+  render();
+}
+
+async function savePlaces(){
+  const ok = await storageSet(STORAGE_KEY, JSON.stringify(places));
+  if(ok){
+    if(statusLine.textContent.startsWith('could not save')) statusLine.textContent = '';
+  } else {
+    statusLine.textContent = 'could not save — your changes may not persist.';
+  }
+}
+
+function renderPriority(el, value){
+  const filled = '★'.repeat(value);
+  const empty = '☆'.repeat(5 - value);
+  el.innerHTML = filled.split('').map(c=>`<span class="filled">${c}</span>`).join('') + empty;
+}
+
+function stampLabel(status){
+  if(status === 'planned') return 'PLANNED';
+  if(status === 'visited') return 'VISITED ✓';
+  return 'DREAMING';
+}
+
+function nextStatus(status){
+  if(status === 'dream') return 'planned';
+  if(status === 'planned') return 'visited';
+  return 'dream';
+}
+
+function render(){
+  const visible = currentFilter === 'all' ? places : places.filter(p => p.status === currentFilter);
+  countBox.textContent = `${places.length} ${places.length === 1 ? 'entry' : 'entries'}`;
+
+  grid.innerHTML = '';
+
+  visible.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'place-card';
+
+    const stars = '★'.repeat(p.priority) + '☆'.repeat(5 - p.priority);
+
+    card.innerHTML = `
+      <button class="remove-btn" title="Remove">✕</button>
+      <div class="photo-block">
+        ${p.photo
+          ? `<img src="${p.photo}" alt="${escapeHtml(p.name)}" onerror="handleImgError(this)">`
+          : `<div class="photo-placeholder"><span class="glyph">⛰</span><span>tap to add photo</span></div>`}
+        <input type="file" accept="image/*" class="card-photo-input">
+      </div>
+      <div class="photo-caption">paste a link instead</div>
+      <div class="card-top">
+        <div>
+          <div class="place-name">${escapeHtml(p.name)}</div>
+          <div class="place-country">${escapeHtml(p.country || '')}</div>
+        </div>
+        <div class="category-mark">${escapeHtml(p.category)}</div>
+      </div>
+      <div class="place-note">${escapeHtml(p.note || '')}</div>
+      <div class="card-bottom">
+        <div class="stars">${stars}</div>
+        <button class="stamp ${p.status}">${stampLabel(p.status)}</button>
+      </div>
+    `;
+
+    card.querySelector('.remove-btn').addEventListener('click', () => removePlace(p.id));
+    card.querySelector('.stamp').addEventListener('click', () => cycleStatus(p.id));
+
+    card.querySelector('.card-photo-input').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      try{
+        p.photo = await resizeImage(file, 480, 0.72);
+        render();
+        await savePlaces();
+      } catch(err){
+        statusLine.textContent = "couldn't read that photo — try a different one.";
+      }
+    });
+
+    card.querySelector('.photo-caption').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const url = window.prompt('Paste a photo link (URL) for this place:', p.photo || '');
+      if(url === null) return;
+      p.photo = url.trim();
+      render();
+      await savePlaces();
+    });
+
+    grid.appendChild(card);
+  });
+
+  if(visible.length === 0){
+    const msg = document.createElement('div');
+    msg.className = 'empty-msg';
+    msg.textContent = places.length === 0
+      ? 'Nothing filed yet. Add the first place you want to see.'
+      : 'Nothing in this drawer yet.';
+    grid.appendChild(msg);
+  }
+
+  const addCard = document.createElement('div');
+  addCard.className = 'add-card';
+  addCard.innerHTML = `<div class="plus">+</div><div>add a place</div>`;
+  addCard.addEventListener('click', openForm);
+  grid.appendChild(addCard);
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+async function removePlace(id){
+  places = places.filter(p => p.id !== id);
+  render();
+  await savePlaces();
+}
+
+async function cycleStatus(id){
+  const p = places.find(p => p.id === id);
+  if(!p) return;
+  p.status = nextStatus(p.status);
+  render();
+  await savePlaces();
+}
+
+function openForm(){
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+  set('fName', '');
+  set('fCountry', '');
+  set('fCategory', 'city');
+  set('fNote', '');
+  selectedPriority = 3;
+  pendingPhotoData = null;
+  set('fPhotoUrl', '');
+  const fileEl = document.getElementById('fPhotoFile');
+  if(fileEl) fileEl.value = '';
+  const box = document.getElementById('formPhotoBox');
+  if(box) box.style.display = 'none';
+  renderPriority(priorityPicker, selectedPriority);
+  if(overlay) overlay.classList.add('open');
+  const nameEl = document.getElementById('fName');
+  if(nameEl) nameEl.focus();
+}
+
+on('fPhotoFile', 'change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    pendingPhotoData = await resizeImage(file, 480, 0.72);
+    document.getElementById('fPhotoUrl').value = '';
+    const box = document.getElementById('formPhotoBox');
+    const preview = document.getElementById('formPhotoPreview');
+    if(box && preview){
+      preview.src = pendingPhotoData;
+      box.style.display = 'block';
+    }
+    statusLine.textContent = '';
+  } catch(err){
+    statusLine.textContent = "couldn't read that photo — try a different one.";
+  }
+});
+
+on('fPhotoUrl', 'input', (e) => {
+  const url = e.target.value.trim();
+  pendingPhotoData = null;
+  const box = document.getElementById('formPhotoBox');
+  const preview = document.getElementById('formPhotoPreview');
+  if(!box || !preview) return;
+  if(url){
+    preview.style.display = '';
+    preview.src = url;
+    box.style.display = 'block';
+    statusLine.textContent = '';
+  } else {
+    box.style.display = 'none';
+  }
+});
+
+const formPreviewImg = document.getElementById('formPhotoPreview');
+if(formPreviewImg){
+  formPreviewImg.addEventListener('error', () => {
+    if(!formPreviewImg.src) return;
+    statusLine.textContent = "that link didn't load as an image — try a direct image link (ending in .jpg/.png, or from an image host like imgur).";
+  });
+  formPreviewImg.addEventListener('load', () => {
+    statusLine.textContent = '';
+  });
+}
+
+function closeForm(){
+  overlay.classList.remove('open');
+}
+
+if(priorityPicker){
+  priorityPicker.addEventListener('click', (e) => {
+    const rect = priorityPicker.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const ratio = x / rect.width;
+    selectedPriority = Math.min(5, Math.max(1, Math.ceil(ratio * 5)));
+    renderPriority(priorityPicker, selectedPriority);
+  });
+}
+
+on('cancelBtn', 'click', closeForm);
+if(overlay) overlay.addEventListener('click', (e) => { if(e.target === overlay) closeForm(); });
+
+on('saveBtn', 'click', async () => {
+  const name = document.getElementById('fName').value.trim();
+  if(!name) return;
+  const newPlace = {
+    id: uid(),
+    name,
+    country: document.getElementById('fCountry').value.trim(),
+    category: document.getElementById('fCategory').value,
+    note: document.getElementById('fNote').value.trim(),
+    priority: selectedPriority,
+    status: 'dream',
+    photo: pendingPhotoData || document.getElementById('fPhotoUrl').value.trim()
+  };
+  places.unshift(newPlace);
+  closeForm();
+  render();
+  await savePlaces();
+});
+
+on('tabs', 'click', (e) => {
+  if(!e.target.classList.contains('tab')) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  e.target.classList.add('active');
+  currentFilter = e.target.dataset.filter;
+  render();
+});
+
+on('shareLinkBtn', 'click', async () => {
+  const btn = document.getElementById('shareLinkBtn');
+  await ensureBlob();
+  const link = location.href;
+  try{
+    await navigator.clipboard.writeText(link);
+    btn.textContent = '✓ link copied — send it to your friend';
+  } catch(e){
+    window.prompt('Copy this link and send it to your friend:', link);
+  }
+  setTimeout(() => { btn.textContent = '🔗 copy link to share with a friend'; }, 3000);
+});
+
+renderPriority(priorityPicker, selectedPriority);
+updateShareLink();
+if(!hasClaudeStorage) ensureBlob();
+loadPlaces();
+</script>
+</body>
+</html>
